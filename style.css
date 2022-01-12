@@ -2,6 +2,9 @@
 
 :root {
   --dark-blue: #363F5F;
+  --green: #49AA26;
+  --light-green: #3DD705;
+  --red: #E92929;
 }
 
 * {
@@ -36,6 +39,10 @@ body {
   margin: auto;
 }
 
+.small {
+  font-size: 80%;
+}
+
 /* === TITLES === */
 
 h2 {
@@ -48,17 +55,46 @@ h2 {
 /* === LINKS & BUTTONS === */
 
 a {
-  color: #49AA26;
+  color: var(--green);
   text-decoration: none;
 }
 
 a:hover {
-  color: #3DD705;
+  color: var(--light-green);
+}
+
+button {
+  width: 100%;
+  height: 50px;
+  border: none;
+  color: #FFF;
+  background: var(--green);
+  border-radius: 0.2rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--light-green);
 }
 
 .button.new {
   display: inline-block;
   margin-bottom: .8rem;
+}
+
+.button.cancel {
+  color: var(--red);
+  border: 2px var(--red) solid;
+  border-radius: 0.2rem;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.button.cancel:hover {
+  opacity: 1;
 }
 
 /* === HEADER === */
@@ -77,7 +113,7 @@ header h1#logo {
 /* === BALANCE === */
 
 section#balance {
-  margin-top: -8rem;
+  margin-top: -7rem;
 }
 
 section#balance h2 {
@@ -110,7 +146,7 @@ section#balance h2 {
 }
 
 .card.total {
-  background: #49AA26;
+  background: var(--green);
   color: #FFF;
 }
 
@@ -168,6 +204,70 @@ td.income {
 
 td.expense {
   color: #E92929;
+}
+
+/* === MODAL === */
+
+.modal-overlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 999;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: #F0F2F5;
+  padding: 2.4rem;
+  width: min(90%, 500px);
+  position: relative;
+  z-index: 1;
+}
+
+/* === FORM === */
+#form {
+  max-width: 500px;
+}
+
+#form h2 {
+  margin-top: 0;
+}
+
+form input {
+  border: none;
+  border-radius: 0.2rem;
+  padding: 0.8rem;
+  width: 100%;
+}
+
+form .input-group {
+  margin-top: 0.8rem;
+}
+
+.input-group .small {
+  opacity: 0.4;
+}
+
+.input-group.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-group.actions .button,
+.input-group.actions button {
+  width: 48%;
 }
 
 /* === FOOTER === */
