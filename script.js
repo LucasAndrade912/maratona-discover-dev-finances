@@ -1,24 +1,20 @@
 const transactions = [
   {
-    id: 1,
     description: 'Luz',
     amount: -50000,
     date: '23/01/2021'
   },
   {
-    id: 2,
     description: 'Website',
     amount: 500000,
     date: '24/01/2021'
   },
   {
-    id: 3,
     description: 'Internet',
     amount: -150000,
     date: '26/01/2021'
   },
   {
-    id: 4,
     description: 'App',
     amount: 200000,
     date: '23/01/2021'
@@ -34,10 +30,42 @@ const Modal = {
   }
 }
 
+const Transaction = {
+  all: transactions,
+
+  incomes() {
+    let income = 0
+
+    Transaction.all.forEach(({ amount }) => {
+      if (amount > 0) {
+        income += amount
+      }
+    })
+
+    return income
+  },
+
+  expenses() {
+    let expense = 0
+
+    Transaction.all.forEach(({ amount }) => {
+      if (amount < 0) {
+        expense += amount
+      }
+    })
+
+    return expense
+  },
+
+  total() {
+    return Transaction.incomes() + Transaction.expenses()
+  }
+}
+
 const DOM = {
   transactionsContainer: document.querySelector('#data-table tbody'),
 
-  addTransition(transaction, index) {
+  addTransaction(transaction, index) {
     const tr = document.createElement('tr')
     tr.innerHTML = DOM.innerHTMLTransaction(transaction)
 
@@ -60,7 +88,21 @@ const DOM = {
     `
 
     return html
-  }
+  },
+
+  updateBalance() {
+    document
+      .querySelector('#incomeDisplay')
+      .innerHTML = Utils.formatCurrency(Transaction.incomes())
+
+    document
+      .querySelector('#expenseDisplay')
+      .innerHTML = Utils.formatCurrency(Transaction.expenses())
+    
+    document
+      .querySelector('#totalDisplay')
+      .innerHTML = Utils.formatCurrency(Transaction.total())
+  },
 }
 
 const Utils = {
@@ -80,7 +122,9 @@ const Utils = {
   }
 }
 
-transactions.forEach(transaction => DOM.addTransition(transaction))
+Transaction.all.forEach(transaction => DOM.addTransaction(transaction))
+
+DOM.updateBalance()
 
 const buttonOpenModal = document.querySelector('a.button.new')
 buttonOpenModal.addEventListener('click', Modal.toggle)
