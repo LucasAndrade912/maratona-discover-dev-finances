@@ -1,27 +1,12 @@
-const transactions = [
-  {
-    description: 'Luz',
-    amount: -50000,
-    date: '23/01/2021'
-  },
-  {
-    description: 'Website',
-    amount: 500000,
-    date: '24/01/2021'
-  },
-  {
-    description: 'Internet',
-    amount: -150000,
-    date: '26/01/2021'
-  },
-  {
-    description: 'App',
-    amount: 200000,
-    date: '23/01/2021'
-  }
-]
-
 const Modal = {
+  watch() {
+    const buttonOpenModal = document.querySelector('a.button.new')
+    buttonOpenModal.addEventListener('click', Modal.toggle)
+
+    const buttonCloseModal = document.querySelector('a.button.cancel')
+    buttonCloseModal.addEventListener('click', Modal.toggle)
+  },
+
   toggle() {
     document
     .querySelector('.modal-overlay')
@@ -31,7 +16,40 @@ const Modal = {
 }
 
 const Transaction = {
-  all: transactions,
+  all: [
+    {
+      description: 'Luz',
+      amount: -50000,
+      date: '23/01/2021'
+    },
+    {
+      description: 'Website',
+      amount: 500000,
+      date: '24/01/2021'
+    },
+    {
+      description: 'Internet',
+      amount: -150000,
+      date: '26/01/2021'
+    },
+    {
+      description: 'App',
+      amount: 200000,
+      date: '23/01/2021'
+    }
+  ],
+
+  add(transaction) {
+    Transaction.all.push(transaction)
+
+    App.reload()
+  },
+
+  remove(index) {
+    Transaction.all.splice(index, 1)
+
+    App.reload()
+  },
 
   incomes() {
     let income = 0
@@ -103,6 +121,68 @@ const DOM = {
       .querySelector('#totalDisplay')
       .innerHTML = Utils.formatCurrency(Transaction.total())
   },
+
+  clearTransactions() {
+    DOM.transactionsContainer.innerHTML = ''
+  }
+}
+
+const Form = {
+  description: document.querySelector('#description'),
+  amount: document.querySelector('#amount'),
+  date: document.querySelector('#date'),
+
+  getValues() {
+    return {
+      description: Form.description.value,
+      amount: Form.amount.value,
+      date: Form.date.value
+    }
+  },
+
+  submit(event) {
+    event.preventDefault()
+    
+    try {
+      Form.validateFields()
+      
+      const transaction = Form.formatValues()
+      Transaction.add(transaction)
+
+      Form.clearFields()
+      Modal.toggle()
+    } catch (error) {
+      alert(error.message)
+    }
+  },
+
+  validateFields() {
+    const { description, amount, date } = Form.getValues()
+    
+    if (description.trim() === '' || amount.trim() === '' || date.trim() === '') {
+      throw new Error('Por favor, preencha todos os campos')
+    }
+  },
+
+  formatValues() {
+    let { description, amount, date } = Form.getValues()
+
+    amount = Utils.formatAmount(amount)
+    date = Utils.formatDate(date)
+
+    return { description, amount, date }
+  },
+
+  clearFields() {
+    Form.description.value = ''
+    Form.amount.value = ''
+    Form.date.value = ''
+  },
+
+  watch() {
+    const form = document.forms[0]
+    form.addEventListener('submit', Form.submit)
+  },
 }
 
 const Utils = {
@@ -119,15 +199,33 @@ const Utils = {
     })
 
     return `${signal}${value}`
+  },
+
+  formatAmount(value) {
+    return Number(value) * 100
+  },
+
+  formatDate(date) {
+    const splittedDate = date.split('-')
+    
+    return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
   }
 }
 
-Transaction.all.forEach(transaction => DOM.addTransaction(transaction))
+const App = {
+  init() {
+    Transaction.all.forEach(transaction => DOM.addTransaction(transaction))
 
-DOM.updateBalance()
+    DOM.updateBalance()
 
-const buttonOpenModal = document.querySelector('a.button.new')
-buttonOpenModal.addEventListener('click', Modal.toggle)
+    Modal.watch()
+    Form.watch()
+  },
 
-const buttonCloseModal = document.querySelector('a.button.cancel')
-buttonCloseModal.addEventListener('click', Modal.toggle)
+  reload() {
+    DOM.clearTransactions()
+    App.init()
+  }
+}
+
+App.init()
